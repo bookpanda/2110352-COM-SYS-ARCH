@@ -11,6 +11,10 @@ gcc -O1 -o hello hello.c
 # Please note that clang-based compiler (e.g. X-code on Mac OS X) only supports level 1 (-O1) optimization.
 gcc -O2 -o hello hello.c
 gcc -O3 -o hello hello.c
+
+# compile a program with immediate assembly result
+gcc -S hello.c -o hello_0.s
+gcc -O1 -S hello.c -o hello_1.s
 ```
 
 ## O0
