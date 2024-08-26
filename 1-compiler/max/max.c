@@ -15,3 +15,7 @@ int max2(int a, int b) {
         max=b;
     return max;
 }
+
+int main() {
+    return max1(1, 2);
+}
