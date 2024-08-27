@@ -1,11 +1,14 @@
 ```sh
 gcc -o fibo_0 fibo.c
 time ./fibo_0
-# 10.97s user 0.01s system 96% cpu 11.419 total
+# avg 10.97s user 0.01s system 96% cpu 11.419 total
 
 gcc -O1 -o fibo_1 fibo.c
 time ./fibo_1
-# ./fibo_1  6.08s user 0.01s system 95% cpu 6.388 total
+# avg  6.08s user 0.01s system 95% cpu 6.388 total
+
+gcc -O2 -o fibo_2 fibo.c
+time ./fibo_2
 
 gcc -S fibo.c
 
