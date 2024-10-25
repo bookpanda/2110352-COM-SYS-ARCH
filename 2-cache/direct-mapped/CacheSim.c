@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "CacheSim.h"
+#include <stdlib.h>
 
 long MISS;
 long HIT;
