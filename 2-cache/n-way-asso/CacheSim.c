@@ -97,6 +97,7 @@ int access(unsigned long addr){
 	for(int c=0;c<WAY;c++) {
 		if(cache[c][idx].tag==tag && cache[c][idx].valid){
 			HIT++;
+			LRU[c][idx] = timestamp++;
 			return 0;
 		}
 	}
@@ -106,7 +107,7 @@ int access(unsigned long addr){
 		cache[RR[idx]][idx].valid = 1;
 		cache[RR[idx]][idx].tag = tag;
 		RR[idx] = (RR[idx]+1) % WAY;
-	} else { // LRU
+	} else if(REPLACEMENT_ALGO == 1) { // LRU
 		long long minTime = __LONG_LONG_MAX__;
 		int kickIdx;
 		for(int c=0;c<WAY;c++) {
