@@ -53,6 +53,7 @@ long HIT;
 struct Cache cache[WAY][INDEX_SIZE];
 int RR[INDEX_SIZE];
 long long LRU[WAY][INDEX_SIZE];
+long long timestamp = 0;
 int init() {
 	MISS=0;
 	HIT=0;
@@ -109,15 +110,14 @@ int access(unsigned long addr){
 		long long minTime = __LONG_LONG_MAX__;
 		int kickIdx;
 		for(int c=0;c<WAY;c++) {
-			if(LRU[c][idx] < minTime){
+			if(LRU[c][idx] < minTime) {
 				minTime = LRU[c][idx];
 				kickIdx = c;
 			}
-			cache[kickIdx][idx].valid = 1;
-			cache[kickIdx][idx].tag = tag;
-			time_t timestamp = time(NULL);
-			LRU[kickIdx][idx] = timestamp;
 		}
+		cache[kickIdx][idx].valid = 1;
+		cache[kickIdx][idx].tag = tag;
+		LRU[kickIdx][idx] = timestamp++;
 	}
 }
 int main(int argc,char *argv[]){
