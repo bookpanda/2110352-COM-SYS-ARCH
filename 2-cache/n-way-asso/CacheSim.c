@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <math.h>
 
@@ -32,7 +33,8 @@
 #define INDEX_SIZE (CACHE_SIZE/BLOCK_SIZE)/WAY
 
 // 0 = RR, 1 = LRU
-#define REPLACEMENT_ALGO 0
+// #define REPLACEMENT_ALGO 0
+#define REPLACEMENT_ALGO 1
 
 #define INDEXLEN ((int)log2(INDEX_SIZE))
 #define OFFSETLEN ((int)log2(BLOCK_SIZE))
@@ -50,6 +52,7 @@ long MISS;
 long HIT;
 struct Cache cache[WAY][INDEX_SIZE];
 int RR[INDEX_SIZE];
+long long LRU[WAY][INDEX_SIZE];
 int init() {
 	MISS=0;
 	HIT=0;
@@ -60,6 +63,7 @@ int init() {
 			cache[c][i].tag=0;
 			cache[c][i].dirty=0;
 		}
+		LRU[c][i] = 0;
 	}
 	for(i=0;i<INDEX_SIZE;i++) {
 		RR[i] = 0;
@@ -102,13 +106,19 @@ int access(unsigned long addr){
 		cache[RR[idx]][idx].tag = tag;
 		RR[idx] = (RR[idx]+1) % WAY;
 	} else { // LRU
-
+		long long minTime = __LONG_LONG_MAX__;
+		int kickIdx;
+		for(int c=0;c<WAY;c++) {
+			if(LRU[c][idx] < minTime){
+				minTime = LRU[c][idx];
+				kickIdx = c;
+			}
+			cache[kickIdx][idx].valid = 1;
+			cache[kickIdx][idx].tag = tag;
+			time_t timestamp = time(NULL);
+			LRU[kickIdx][idx] = timestamp;
+		}
 	}
-	// else{
-    //     cache[idx].valid=1;
-    //     cache[idx].tag = tag;
-	// }
-
 }
 int main(int argc,char *argv[]){
     FILE *input;
