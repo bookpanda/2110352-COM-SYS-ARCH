@@ -24,13 +24,12 @@
 // #define CACHE_SIZE 1024*16
 // #define CACHE_SIZE 1024*32
 
-#define BLOCK_SIZE 4
+// #define BLOCK_SIZE 4
 // #define BLOCK_SIZE 8
 // #define BLOCK_SIZE 16
-// #define BLOCK_SIZE 32
+#define BLOCK_SIZE 32
 
 #define INDEX_SIZE CACHE_SIZE/BLOCK_SIZE
-// #define INDEX_SIZE 64
 
 #define INDEXLEN ((int)log2(INDEX_SIZE))
 #define OFFSETLEN ((int)log2(BLOCK_SIZE))
@@ -107,6 +106,6 @@ int main(int argc,char *argv[]){
 		sscanf(buff,"0x%x",&myaddr);
         access(myaddr);
     }
-    printf("HIT:%7d MISS: %7d\n",HIT,MISS);
+    printf("HIT: %7d\nMISS:%7d\n",HIT,MISS);
 
 }
