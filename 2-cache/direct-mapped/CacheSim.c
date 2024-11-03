@@ -19,10 +19,10 @@
 
 #include <math.h>
 
-#define CACHE_SIZE 1024*4
+// #define CACHE_SIZE 1024*4
 // #define CACHE_SIZE 1024*8
 // #define CACHE_SIZE 1024*16
-// #define CACHE_SIZE 1024*32
+#define CACHE_SIZE 1024*32
 
 // #define BLOCK_SIZE 4
 // #define BLOCK_SIZE 8
