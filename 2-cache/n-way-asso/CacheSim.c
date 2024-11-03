@@ -14,27 +14,29 @@
 **/
 #include <stdio.h>
 #include <string.h>
-// #include "CacheSim.h"
 #include <stdlib.h>
 
 #include <math.h>
 
+#define CACHE_SIZE 1024*1
 // #define CACHE_SIZE 1024*4
 // #define CACHE_SIZE 1024*8
-// #define CACHE_SIZE 1024*16
-#define CACHE_SIZE 1024*32
+// #define CACHE_SIZE 1024*32
+// #define CACHE_SIZE 1024*512
+// #define CACHE_SIZE 1024*1024
 
-// #define BLOCK_SIZE 4
-// #define BLOCK_SIZE 8
-// #define BLOCK_SIZE 16
-#define BLOCK_SIZE 32
+#define BLOCK_SIZE 4
 
-#define INDEX_SIZE CACHE_SIZE/BLOCK_SIZE
+#define WAY 2
+
+#define INDEX_SIZE (CACHE_SIZE/BLOCK_SIZE)/WAY
+
+// 0 = RR, 1 = LRU
+#define REPLACEMENT_ALGO 0
 
 #define INDEXLEN ((int)log2(INDEX_SIZE))
 #define OFFSETLEN ((int)log2(BLOCK_SIZE))
 #define TAGLEN (32-INDEXLEN-OFFSETLEN)
-#define WAY 2
 typedef unsigned char Byte;
 typedef unsigned char bool;
 struct Cache{
@@ -46,16 +48,22 @@ struct Cache{
 
 long MISS;
 long HIT;
-struct Cache cache[INDEX_SIZE];
+struct Cache cache[WAY][INDEX_SIZE];
+int RR[INDEX_SIZE];
 int init() {
 	MISS=0;
 	HIT=0;
 	int i;
-    for(i=0;i<INDEX_SIZE;i++){
-        cache[i].valid=0;
-        cache[i].tag=0;
-        cache[i].dirty=0;
-    }
+	for(int c=0;c<WAY;c++) {
+		for(i=0;i<INDEX_SIZE;i++) {
+			cache[c][i].valid=0;
+			cache[c][i].tag=0;
+			cache[c][i].dirty=0;
+		}
+	}
+	for(i=0;i<INDEX_SIZE;i++) {
+		RR[i] = 0;
+	}
 }
 int calAddr(unsigned long addr,unsigned long *tag,unsigned long *idx,unsigned long *offset) {
 	unsigned long tmp;
@@ -81,14 +89,25 @@ int access(unsigned long addr){
     int i;
 	int valid=0;
 	calAddr(addr,&tag,&idx,&offset);
-	if(cache[idx].tag==tag && cache[idx].valid){
-        HIT++;
+	for(int c=0;c<WAY;c++) {
+		if(cache[c][idx].tag==tag && cache[c][idx].valid){
+			HIT++;
+			return 0;
+		}
 	}
-	else{
-        MISS++;
-        cache[idx].valid=1;
-        cache[idx].tag = tag;
+	// miss in all ways; need to kick someone
+    MISS++;
+	if(REPLACEMENT_ALGO == 0) { // RR
+		cache[RR[idx]][idx].valid = 1;
+		cache[RR[idx]][idx].tag = tag;
+		RR[idx] = (RR[idx]+1) % WAY;
+	} else { // LRU
+
 	}
+	// else{
+    //     cache[idx].valid=1;
+    //     cache[idx].tag = tag;
+	// }
 
 }
 int main(int argc,char *argv[]){
