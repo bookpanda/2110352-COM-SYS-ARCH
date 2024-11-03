@@ -14,8 +14,36 @@
 **/
 #include <stdio.h>
 #include <string.h>
-#include "CacheSim.h"
+// #include "CacheSim.h"
 #include <stdlib.h>
+
+#include <math.h>
+
+#define CACHE_SIZE 1024*4
+// #define CACHE_SIZE 1024*8
+// #define CACHE_SIZE 1024*16
+// #define CACHE_SIZE 1024*32
+
+#define BLOCK_SIZE 4
+// #define BLOCK_SIZE 8
+// #define BLOCK_SIZE 16
+// #define BLOCK_SIZE 32
+
+#define INDEX_SIZE CACHE_SIZE/BLOCK_SIZE
+// #define INDEX_SIZE 64
+
+#define INDEXLEN ((int)log2(INDEX_SIZE))
+#define OFFSETLEN ((int)log2(BLOCK_SIZE))
+#define TAGLEN (32-INDEXLEN-OFFSETLEN)
+#define WAY 2
+typedef unsigned char Byte;
+typedef unsigned char bool;
+struct Cache{
+    bool valid;
+    bool dirty;
+    unsigned long tag;
+    Byte data[BLOCK_SIZE];
+};
 
 long MISS;
 long HIT;
@@ -65,17 +93,15 @@ int access(unsigned long addr){
 
 }
 int main(int argc,char *argv[]){
-    printf("CacheSim v.2015\n");
-    printf("This program is designed for class exercise only.\n");
-    printf("By Krerk Piromsopa, Ph.D.\n");
     FILE *input;
     char buff[1025];
     unsigned long myaddr;
-    if (argc<2) {
-		fprintf(stderr,"Usage:\n\t%s address_file\n",argv[0]);
-		exit(-1);
-	}
-    input=fopen(argv[1],"r");
+    // if (argc<2) {
+	// 	fprintf(stderr,"Usage:\n\t%s address_file\n",argv[0]);
+	// 	exit(-1);
+	// }
+    // input=fopen(argv[1],"r");
+	input=fopen("gcc_ld_trace.txt","r");
     //read file
     while (fgets(& buff[0],1024,input)) {
 		sscanf(buff,"0x%x",&myaddr);
